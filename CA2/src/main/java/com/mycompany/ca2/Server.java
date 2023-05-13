@@ -31,7 +31,7 @@ public class Server {
 
         try {
 
-                while(socket.isClosed()) {
+                while(!socket.isClosed()) {
 
                     Socket serverSocket = socket.accept();
                     System.out.println("New connection : ");
