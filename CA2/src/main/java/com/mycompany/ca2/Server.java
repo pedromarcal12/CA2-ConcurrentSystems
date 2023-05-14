@@ -9,7 +9,10 @@ import java.net.Socket;
  * @author Pedro Henrique Simoes Marcal - 2020300
  * YouChat
  * A multiple group chat application
- */
+
+ * Server method, where the server will be initialized and started.
+ * Run here first and Client after.
+   */
 public class Server {
 
     public static void main (String[] args ) throws IOException {
@@ -31,6 +34,7 @@ public class Server {
 
         try {
 
+        // Executing while loop while socket is open
                 while(!socket.isClosed()) {
 
                     Socket serverSocket = socket.accept();
@@ -42,11 +46,12 @@ public class Server {
 
                 }
         } catch (Exception e) {
-            System.out.println("Error");
+            System.out.println("Error on Server class");
         }
 
     }
 
+    //If socket value not equal to null, close it
     public void close() throws IOException {
           if (socket!=null) {
               socket.close();
