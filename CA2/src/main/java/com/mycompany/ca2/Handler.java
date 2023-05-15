@@ -1,8 +1,7 @@
 package com.mycompany.ca2;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import com.mycompany.ca2.Server;
@@ -18,11 +17,11 @@ public class Handler implements Runnable{
     private BufferedReader BFReader;
     String clientMessage;
 
-    public handler(Socket serverSocket) {
+    public Handler(Socket serverSocket) throws IOException {
         try {
             this.serverSocket=serverSocket;
-            this.BFWriter = new BufferedWriter();
-            this.BFReader = new BufferedReader();
+            this.BFWriter = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
+            this.BFReader = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
             this.username = BFReader.readLine();
             clients.add(this);
         // Broadcasting message when a user connects in;
@@ -30,7 +29,7 @@ public class Handler implements Runnable{
 
         } catch (Exception e) {
             System.out.println("Error on Handler class");
-            closeEverything();
+            closeEverything(serverSocket, BFReader, BFWriter);
         }
     }
 
@@ -44,7 +43,11 @@ public class Handler implements Runnable{
                 message(clientMessage);
             } catch (IOException e) {
                System.out.println("Error on runnable class");
-               closeEverything(serverSocket, BFReader, BFReader);
+                try {
+                    closeEverything(serverSocket, BFReader, BFWriter);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
 
@@ -72,5 +75,17 @@ public class Handler implements Runnable{
     public void removeUser() throws IOException {
         clients.remove(this);
         message("User" + username + "has logged off");
+    }
+    public void closeEverything(Socket serverSocket, BufferedReader BFReader, BufferedWriter BFWriter) throws IOException {
+        removeUser();
+        try {
+            if (BFReader != null && BFWriter !=null && serverSocket !=null) {
+                BFReader.close();
+                BFWriter.close();
+                serverSocket.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
