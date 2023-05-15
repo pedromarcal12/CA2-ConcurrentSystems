@@ -11,25 +11,25 @@ public class Handler implements Runnable{
 
     //List for adding all the users entering the server
     public static ArrayList<Handler> clients = new ArrayList<>();
-    private Socket serverSocket;
+    private Socket socketServer;
     public String username;
     private BufferedWriter BFWriter;
     private BufferedReader BFReader;
     String clientMessage;
 
-    public Handler(Socket serverSocket) throws IOException {
+    public Handler(Socket socketServer) throws IOException {
         try {
-            this.serverSocket=serverSocket;
-            this.BFWriter = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
-            this.BFReader = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+            this.socketServer=socketServer;
+            this.BFWriter = new BufferedWriter(new OutputStreamWriter(socketServer.getOutputStream()));
+            this.BFReader = new BufferedReader(new InputStreamReader(socketServer.getInputStream()));
             this.username = BFReader.readLine();
             clients.add(this);
         // Broadcasting message when a user connects in;
-            message("");
+            message("User connected");
 
         } catch (Exception e) {
             System.out.println("Error on Handler class");
-            closeEverything(serverSocket, BFReader, BFWriter);
+            closeEverything(socketServer, BFReader, BFWriter);
         }
     }
 
@@ -37,14 +37,14 @@ public class Handler implements Runnable{
     public void run() {
 
         // Reading and displaying message texted by the user
-        while(serverSocket.isConnected()) {
+        while(socketServer.isConnected()) {
             try {
                 clientMessage = BFReader.readLine();
                 message(clientMessage);
             } catch (IOException e) {
                System.out.println("Error on runnable class");
                 try {
-                    closeEverything(serverSocket, BFReader, BFWriter);
+                    closeEverything(socketServer, BFReader, BFWriter);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -56,7 +56,7 @@ public class Handler implements Runnable{
     public void message(String clientMessage) throws IOException {
         for (Handler Handler : clients) {
           try {
-              if (serverSocket.isConnected()) {
+              if (socketServer.isConnected()) {
                   clientMessage = BFReader.readLine();
               }
               if (!Handler.username.equals(username)) {
@@ -68,7 +68,7 @@ public class Handler implements Runnable{
                   Handler.BFWriter.flush();
               }
           } catch (IOException e) {
-              closeEverything(serverSocket, BFReader, BFWriter ) ;
+              closeEverything(socketServer, BFReader, BFWriter ) ;
             }
         }
     }

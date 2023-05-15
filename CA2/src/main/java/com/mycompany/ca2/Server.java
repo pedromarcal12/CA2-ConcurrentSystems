@@ -16,7 +16,7 @@ public class Server {
 
     public static void main (String[] args ) throws IOException {
         // Initializing server Socket, port number here has to match the port in Handler class
-    ServerSocket server = new ServerSocket(8080);
+    ServerSocket server = new ServerSocket(1234);
        // Initializing server with server Socket as a parameter
     Server socketServer = new Server(server);
     socketServer.start();
@@ -42,7 +42,7 @@ public class Server {
 
                     // Creating threads to run multiple chats
                     Thread threadServer = new Thread(handler);
-
+                    threadServer.start();
                 }
         } catch (Exception e) {
             System.out.println("Error on Server class");
