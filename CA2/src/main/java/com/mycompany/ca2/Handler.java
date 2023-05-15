@@ -18,7 +18,7 @@ public class Handler implements Runnable{
     private BufferedReader BFReader;
     String clientMessage;
 
-    public Handler(Socket serverSocket) {
+    public handler(Socket serverSocket) {
         try {
             this.serverSocket=serverSocket;
             this.BFWriter = new BufferedWriter();
@@ -44,18 +44,33 @@ public class Handler implements Runnable{
                 message(clientMessage);
             } catch (IOException e) {
                System.out.println("Error on runnable class");
-               closeEverything();
+               closeEverything(serverSocket, BFReader, BFReader);
             }
         }
 
     }
 
-    public void message(String messageToSend) {
-        for (Handler clients : clientsHandler) {
-            if () {
-
+    public void message(String clientMessage) throws IOException {
+        for (Handler Handler : clients) {
+          try {
+              if (serverSocket.isConnected()) {
+                  clientMessage = BFReader.readLine();
+              }
+              if (!Handler.username.equals(username)) {
+                  // Passing string with message as parameter;
+                  Handler.BFWriter.write(clientMessage);
+                  // Showing that there is no more data;
+                  Handler.BFWriter.newLine();
+                  // Flush buffer
+                  Handler.BFWriter.flush();
+              }
+          } catch (IOException e) {
+              closeEverything(serverSocket, BFReader, BFWriter ) ;
             }
         }
-
+    }
+    public void removeUser() throws IOException {
+        clients.remove(this);
+        message("User" + username + "has logged off");
     }
 }

@@ -9,7 +9,6 @@ import java.net.Socket;
  * @author Pedro Henrique Simoes Marcal - 2020300
  * YouChat
  * A multiple group chat application
-
  * Server method, where the server will be initialized and started.
  * Run here first and Client after.
    */
