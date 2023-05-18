@@ -84,7 +84,7 @@ public class Client {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter Username: ");
         String username = sc.nextLine();
-        Socket socket = new Socket("localhost", 1234);
+        Socket socket = new Socket("localhost", 1235);
         Client client = new Client(socket, username);
         client.lookForMessage();
         client.sendMessage();
