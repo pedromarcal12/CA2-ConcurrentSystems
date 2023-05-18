@@ -38,7 +38,7 @@ public class Client {
             // while loop to display name of the users connected within our server
             while (socket.isConnected()) {
                 String messageSend = scanner.nextLine();
-            BFWriter.write("username:" +  messageSend);
+            BFWriter.write(":" + messageSend);
                 BFWriter.newLine();
                 BFWriter.flush();
             }
@@ -49,17 +49,14 @@ public class Client {
     }
     public void lookForMessage() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String groupChatMsg;
-                while (socket.isConnected()) {
-                    try {
-                        groupChatMsg = BFReader.readLine();
-                        System.out.println(groupChatMsg);
-                    } catch (IOException e) {
-                       closeEverything(socket, BFReader, BFWriter);
-                    }
+        new Thread(() -> {
+            String groupChatMsg;
+            while (socket.isConnected()) {
+                try {
+                    groupChatMsg = BFReader.readLine();
+                    System.out.println(groupChatMsg);
+                } catch (IOException e) {
+                    closeEverything(socket, BFReader, BFWriter);
                 }
             }
         }).start();
