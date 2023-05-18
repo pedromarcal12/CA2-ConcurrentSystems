@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import com.mycompany.ca2.Server;
 
 //Class that will handle all client set-ups, thread will be needed to face with different servers running at the same time
 public class Handler implements Runnable{

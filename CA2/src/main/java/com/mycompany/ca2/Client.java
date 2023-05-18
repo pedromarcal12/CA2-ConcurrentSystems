@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class Client {
     private Socket socket;
     public String username;
+    public String password;
     private BufferedWriter BFWriter;
     private BufferedReader BFReader;
 
@@ -77,10 +78,13 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
 
+        Scanner pwd = new Scanner(System.in);
         //Where the user can choose the username and enter your password
-        Scanner sc = new Scanner(System.in);
+        Scanner user = new Scanner(System.in);
         System.out.println("Enter Username: ");
-        String username = sc.nextLine();
+        String username = user.nextLine();
+        System.out.println("Enter Password: ");
+        String password = pwd.nextLine();
         Socket socket = new Socket("localhost", 1235);
         Client client = new Client(socket, username);
         client.lookForMessage();
