@@ -10,7 +10,7 @@ import java.util.Scanner;
  * Run the Server class first and here after
  */
 public class Client {
-    private Socket serverSocket;
+    private Socket socket;
     public String username;
     private BufferedWriter BFWriter;
     private BufferedReader BFReader;
@@ -21,22 +21,22 @@ public class Client {
         Scanner sc = new Scanner(System.in);
         System.out.println("Username: ");
         String username = sc.nextLine();
-        Socket serverSocket = new Socket(1234);
-        Client client = new Client(serverSocket, username);
+        Socket socket = new Socket("localhost", 1111);
+        Client client = new Client(socket, username);
         client.lookForMessage();
         client.sendMessage();
     }
 
     // Constructor for our user Client
-    public Client(Socket serverSocket, String username) throws IOException {
+    public Client(Socket socket, String username) throws IOException {
         try {
-            this.serverSocket = serverSocket;
-            this.BFWriter = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
-            this.BFReader = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+            this.socket = socket;
+            this.BFWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.BFReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.username = username;
            // If error, close all methods
         } catch (IOException e) {
-            closeEverything(serverSocket, BFReader, BFWriter);
+            closeEverything(socket, BFReader, BFWriter);
         }
     }
 
@@ -48,7 +48,7 @@ public class Client {
             BFWriter.flush();
             Scanner scanner = new Scanner(System.in);
             // while loop to display name of the users connected within our server
-            while (!serverSocket.isConnected()) {
+            while (!socket.isConnected()) {
                 String message = scanner.nextLine();
                 BFWriter.write("Username" + ":" + message);
                 BFWriter.newLine();
@@ -56,7 +56,7 @@ public class Client {
             }
             // if error, close all methods
         } catch (IOException e) {
-            closeEverything(serverSocket, BFReader, BFWriter);
+            closeEverything(socket, BFReader, BFWriter);
         }
     }
     public void lookForMessage() {
@@ -65,23 +65,23 @@ public class Client {
             public void run() {
                 String groupChatMsg;
 
-                while (serverSocket.isConnected()) {
+                while (socket.isConnected()) {
                     try {
                         groupChatMsg = BFReader.readLine();
                         System.out.println(groupChatMsg);
                     } catch (IOException e) {
-                       closeEverything(serverSocket, BFReader, BFWriter);
+                       closeEverything(socket, BFReader, BFWriter);
                     }
                 }
             }
         }).start();
     }
-    public void closeEverything(Socket serverSocket, BufferedReader BFReader, BufferedWriter BFWriter) {
+    public void closeEverything(Socket socket, BufferedReader BFReader, BufferedWriter BFWriter) {
         try {
-            if (BFReader != null && BFWriter !=null && serverSocket !=null) {
+            if (BFReader != null && BFWriter !=null && socket !=null) {
                 BFReader.close();
                 BFWriter.close();
-                serverSocket.close();
+                socket.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

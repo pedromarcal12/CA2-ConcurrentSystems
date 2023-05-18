@@ -14,18 +14,17 @@ import java.net.Socket;
    */
 public class Server {
 
+    private ServerSocket serverSocket;
     public static void main (String[] args ) throws IOException {
         // Initializing server Socket, port number here has to match the port in Handler class
-    ServerSocket server = new ServerSocket(1234);
+    ServerSocket serverSocket = new ServerSocket(1111);
        // Initializing server with server Socket as a parameter
-    Server socketServer = new Server(server);
-    socketServer.start();
+    Server server = new Server(serverSocket);
+    server.start();
     }
 
-    private ServerSocket socket;
-
-    public Server(ServerSocket socket) {
-    this.socket = socket;
+    public Server(ServerSocket serverSocket) {
+    this.serverSocket = serverSocket;
 }
 
     // Method to start server and return error message if not connected
@@ -34,11 +33,11 @@ public class Server {
         try {
 
         // Executing while loop while socket is open
-                while(!socket.isClosed()) {
+                while(!serverSocket.isClosed()) {
 
-                    Socket serverSocket = socket.accept();
-                    System.out.println("New connection : ");
-                    Handler handler = new Handler(serverSocket);
+                    Socket socket = serverSocket.accept();
+                    System.out.println("New connection!");
+                    Handler handler = new Handler(socket);
 
                     // Creating threads to run multiple chats
                     Thread threadServer = new Thread(handler);
@@ -52,13 +51,15 @@ public class Server {
 
     //If socket value not equal to null, close it
     public void close() throws IOException {
-          if (socket!=null) {
-              socket.close();
-          }
+        try {
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            System.out.println("Error closing");
+        }
+
+
     }
-
-
-
-
     }
 
