@@ -11,77 +11,72 @@ public class Handler implements Runnable{
 
     //List for adding all the users entering the server
     public static ArrayList<Handler> clients = new ArrayList<>();
-    private Socket socketServer;
+    private Socket socket;
     public String username;
     private BufferedWriter BFWriter;
     private BufferedReader BFReader;
-    String clientMessage;
 
-    public Handler(Socket socketServer) throws IOException {
+
+    public Handler(Socket socket) {
         try {
-            this.socketServer=socketServer;
-            this.BFWriter = new BufferedWriter(new OutputStreamWriter(socketServer.getOutputStream()));
-            this.BFReader = new BufferedReader(new InputStreamReader(socketServer.getInputStream()));
+            this.socket=socket;
+            this.BFWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.BFReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.username = BFReader.readLine();
             clients.add(this);
         // Broadcasting message when a user connects in;
-            message("User connected");
+            message("User connected : " + username);
 
         } catch (Exception e) {
-            System.out.println("Error on Handler class");
-            closeEverything(socketServer, BFReader, BFWriter);
+            closeEverything(socket, BFReader, BFWriter);
         }
     }
 
     @Override
     public void run() {
-
+        String messageSendGroup;
         // Reading and displaying message texted by the user
-        while(socketServer.isConnected()) {
+        while(socket.isConnected()) {
             try {
-                clientMessage = BFReader.readLine();
-                message(clientMessage);
-            } catch (IOException e) {
-               System.out.println("Error on runnable class");
-                try {
-                    closeEverything(socketServer, BFReader, BFWriter);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                messageSendGroup = BFReader.readLine();
+                message(username + messageSendGroup);
+            }
+            catch (IOException e) {
+            closeEverything(socket, BFReader, BFWriter);
+            break;
                 }
             }
         }
 
-    }
 
-    public void message(String clientMessage) throws IOException {
+    public void message(String messageSend) {
         for (Handler Handler : clients) {
           try {
-              if (socketServer.isConnected()) {
-                  clientMessage = BFReader.readLine();
-              }
               if (!Handler.username.equals(username)) {
                   // Passing string with message as parameter;
-                  Handler.BFWriter.write(clientMessage);
+                  Handler.BFWriter.write(messageSend);
                   // Showing that there is no more data;
                   Handler.BFWriter.newLine();
                   // Flush buffer
                   Handler.BFWriter.flush();
               }
           } catch (IOException e) {
-              closeEverything(socketServer, BFReader, BFWriter ) ;
+              closeEverything(socket, BFReader, BFWriter ) ;
             }
         }
     }
-    public void removeUser() throws IOException {
+    public void removeUser() {
         clients.remove(this);
         message("User" + username + "has logged off");
     }
-    public void closeEverything(Socket serverSocket, BufferedReader BFReader, BufferedWriter BFWriter) throws IOException {
+    public void closeEverything(Socket serverSocket, BufferedReader BFReader, BufferedWriter BFWriter) {
         removeUser();
         try {
-            if (BFReader != null && BFWriter !=null && serverSocket !=null) {
+            if (BFReader != null) {
                 BFReader.close();
+            if (BFWriter != null)
                 BFWriter.close();
+            if (serverSocket != null)
                 serverSocket.close();
             }
         } catch (Exception e) {

@@ -15,13 +15,6 @@ import java.net.Socket;
 public class Server {
 
     private ServerSocket serverSocket;
-    public static void main (String[] args ) throws IOException {
-        // Initializing server Socket, port number here has to match the port in Handler class
-    ServerSocket serverSocket = new ServerSocket(1111);
-       // Initializing server with server Socket as a parameter
-    Server server = new Server(serverSocket);
-    server.start();
-    }
 
     public Server(ServerSocket serverSocket) {
     this.serverSocket = serverSocket;
@@ -37,10 +30,10 @@ public class Server {
 
                     Socket socket = serverSocket.accept();
                     System.out.println("New connection!");
-                    Handler handler = new Handler(socket);
+                    Handler Handler = new Handler(socket);
 
                     // Creating threads to run multiple chats
-                    Thread threadServer = new Thread(handler);
+                    Thread threadServer = new Thread(Handler);
                     threadServer.start();
                 }
         } catch (Exception e) {
@@ -60,6 +53,13 @@ public class Server {
         }
 
 
+    }
+    public static void main (String[] args ) throws IOException {
+        // Initializing server Socket, port number here has to match the port in Handler class
+        ServerSocket serverSocket = new ServerSocket(1234);
+        // Initializing server with server Socket as a parameter
+        Server server = new Server(serverSocket);
+        server.start();
     }
     }
 

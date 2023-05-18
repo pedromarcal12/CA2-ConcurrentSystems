@@ -15,18 +15,6 @@ public class Client {
     private BufferedWriter BFWriter;
     private BufferedReader BFReader;
 
-    public static void main(String[] args) throws IOException {
-
-        //Where the user can choose the username and enter your password
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Username: ");
-        String username = sc.nextLine();
-        Socket socket = new Socket("localhost", 1111);
-        Client client = new Client(socket, username);
-        client.lookForMessage();
-        client.sendMessage();
-    }
-
     // Constructor for our user Client
     public Client(Socket socket, String username) throws IOException {
         try {
@@ -48,9 +36,9 @@ public class Client {
             BFWriter.flush();
             Scanner scanner = new Scanner(System.in);
             // while loop to display name of the users connected within our server
-            while (!socket.isConnected()) {
-                String message = scanner.nextLine();
-                BFWriter.write("Username" + ":" + message);
+            while (socket.isConnected()) {
+                String messageSend = scanner.nextLine();
+            BFWriter.write("username:" +  messageSend);
                 BFWriter.newLine();
                 BFWriter.flush();
             }
@@ -60,11 +48,11 @@ public class Client {
         }
     }
     public void lookForMessage() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String groupChatMsg;
-
                 while (socket.isConnected()) {
                     try {
                         groupChatMsg = BFReader.readLine();
@@ -78,13 +66,27 @@ public class Client {
     }
     public void closeEverything(Socket socket, BufferedReader BFReader, BufferedWriter BFWriter) {
         try {
-            if (BFReader != null && BFWriter !=null && socket !=null) {
+            if (BFReader != null) {
                 BFReader.close();
-                BFWriter.close();
-                socket.close();
+                if (BFWriter !=null)
+                    BFWriter.close();
+                if (socket !=null)
+                    socket.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        //Where the user can choose the username and enter your password
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter Username: ");
+        String username = sc.nextLine();
+        Socket socket = new Socket("localhost", 1234);
+        Client client = new Client(socket, username);
+        client.lookForMessage();
+        client.sendMessage();
     }
 }
