@@ -66,7 +66,7 @@ public class Handler implements Runnable{
     }
     public void removeUser() {
         clients.remove(this);
-        message("User" + username + " has logged off");
+        message("User : " + username + " has logged off");
     }
     public void closeEverything(Socket serverSocket, BufferedReader BFReader, BufferedWriter BFWriter) {
         removeUser();
