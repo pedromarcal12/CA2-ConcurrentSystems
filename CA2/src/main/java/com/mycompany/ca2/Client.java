@@ -1,8 +1,6 @@
 package com.mycompany.ca2;
 
-
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -14,9 +12,10 @@ import java.util.regex.Pattern;
 public class Client {
     private Socket socket;
     public String username;
-    /*public String password;*/
     private BufferedWriter BFWriter;
     private BufferedReader BFReader;
+    
+    /*public String password;*/
     /*private static final String PASSWORD_REGEX =
         "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,16}$";
  
@@ -27,6 +26,7 @@ public class Client {
     public Client(Socket socket, String username /*String password*/) throws IOException {
         try {
             /*this.password = password;*/
+            
             this.socket = socket;
             this.BFWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.BFReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -56,6 +56,8 @@ public class Client {
             closeEverything(socket, BFReader, BFWriter);
         }
     }
+    
+    // Class that will be looking for message, thread implemented
     public void lookForMessage() {
 
         new Thread(() -> {
@@ -70,6 +72,8 @@ public class Client {
             }
         }).start();
     }
+    
+    //Class that will close our socket, bufferedread and bufferedwriter
     public void closeEverything(Socket socket, BufferedReader BFReader, BufferedWriter BFWriter) {
         try {
             if (BFReader != null) {
@@ -83,6 +87,8 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+    
+    
     /* public void password() {
         if (PASSWORD_PATTERN.matcher(password).matches()) {
             System.out.print("The Password " + password + " is valid");
@@ -92,21 +98,25 @@ public class Client {
         }
     } */
 
+    
     public static void main(String[] args) throws IOException {
-
        
-        Scanner pwd = new Scanner(System.in);
+        //Scanner pwd = new Scanner(System.in);
+        
         //Where the user can choose the username and enter your password
         Scanner user = new Scanner(System.in);
         System.out.println("Enter Username: ");
         String username = user.nextLine();
-        System.out.println("Enter Password: ");
+                
+        //System.out.println("Enter Password: ");
         //String password = pwd.nextLine();
+        
         Socket socket = new Socket("localhost", 1235);
         Client client = new Client(socket, username /*password*/ );
         client.lookForMessage();
-        /*client.password();*/
         client.sendMessage();
+        /*client.password();*/
+        
         
       
 }

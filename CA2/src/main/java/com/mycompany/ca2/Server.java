@@ -24,7 +24,7 @@ public class Server {
 
         try {
 
-        // Executing while loop while socket is open
+        // Executing while loop while socket is not closed
                 while(!serverSocket.isClosed()) {
 
                     Socket socket = serverSocket.accept();
@@ -41,7 +41,7 @@ public class Server {
 
     }
 
-    //If socket value not equal to null, close it
+    //Method that will close the server socket. If socket value not equal to null, close it
     public void close() throws IOException  {
         try {
             if (serverSocket != null) {
@@ -54,6 +54,7 @@ public class Server {
 
     }
     public static void main (String[] args ) throws IOException {
+        
         // Initializing server Socket, port number here has to match the port in Handler class
         ServerSocket serverSocket = new ServerSocket(1235);
         // Initializing server with server Socket as a parameter
